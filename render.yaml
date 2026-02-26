@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: lifeos-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lifeos-db
+          property: connectionString
+      - key: DEBUG
+        value: false
+
+databases:
+  - name: lifeos-db
+    plan: free
