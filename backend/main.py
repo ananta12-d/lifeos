@@ -83,15 +83,18 @@ def get_db():
 # SECURITY  (password hashing + JWT)
 # ════════════════════════════════════════
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
+# ════════════════════════════════════════
+# SECURITY  (password hashing + JWT)
+# ════════════════════════════════════════
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
 def hash_password(password: str) -> str:
     # Bcrypt requires bytes. We also truncate to 72 bytes to prevent length errors.
     pwd_bytes = password[:72].encode('utf-8')
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(pwd_bytes, salt)
-    return hashed_password.decode('utf-8') # Return as string for database storage
+    return hashed_password.decode('utf-8')
 
 
 def verify_password(plain: str, hashed: str) -> bool:
@@ -99,12 +102,11 @@ def verify_password(plain: str, hashed: str) -> bool:
     plain_bytes = plain[:72].encode('utf-8')
     hashed_bytes = hashed.encode('utf-8')
     try:
+        # Check if the plain password matches the hashed one
         return bcrypt.checkpw(plain_bytes, hashed_bytes)
-    except ValueError:
-        # Triggers if the hashed string is invalid/corrupted
-        return Falseool:
-    return pwd_context.verify(plain[:72], hashed)
-
+    except (ValueError, TypeError, Exception):
+        # Triggers if the hashed string is invalid, corrupted, or missing
+        return False
 
 def create_access_token(email: str) -> str:
     expire  = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
