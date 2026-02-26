@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeOS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen">
+    <div class="login-card">
+        <div class="login-logo">Life<span>OS</span></div>
+        <div class="login-subtitle">Your personal productivity system</div>
+
+        <div class="login-tabs">
+            <button class="login-tab active" onclick="switchAuthTab('login')">Sign In</button>
+            <button class="login-tab" onclick="switchAuthTab('register')">Register</button>
+        </div>
+
+        <div class="error-msg" id="login-error"></div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="email" class="form-input" placeholder="you@example.com" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn-primary">Sign In →</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="hidden">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="reg-name" class="form-input" placeholder="Your name" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="reg-email" class="form-input" placeholder="you@example.com" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="reg-password" class="form-input" placeholder="Min 8 characters" required />
+            </div>
+            <button type="submit" class="btn-primary">Create Account →</button>
+        </form>
+    </div>
+</div>
+
+<!-- ══ APP SCREEN ══ -->
+<div id="app-screen" class="hidden">
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="mobile-logo">LifeOS</div>
+        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Life<span>OS</span></div>
+            <div class="sidebar-tagline">Productivity System</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Workspace</div>
+            <button class="nav-btn" id="tab-btn-dashboard" onclick="switchTab('dashboard')">
+                <span class="nav-icon">◈</span> Dashboard
+            </button>
+            <button class="nav-btn" id="tab-btn-tasks" onclick="switchTab('tasks')">
+                <span class="nav-icon">✦</span> Daily Tasks
+            </button>
+            <button class="nav-btn" id="tab-btn-habits" onclick="switchTab('habits')">
+                <span class="nav-icon">◎</span> Habit Tracker
+            </button>
+            <div class="nav-section-label">Account</div>
+            <button class="nav-btn" id="tab-btn-profile" onclick="switchTab('profile')">
+                <span class="nav-icon">⊙</span> Profile & Settings
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card" onclick="switchTab('profile')">
+                <div class="user-avatar" id="sidebar-avatar">?</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebar-username">Loading...</div>
+                    <div class="user-role">Free Plan</div>
+                </div>
+                <button class="logout-btn" onclick="event.stopPropagation(); confirmLogout()" title="Log out">⏻</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- DASHBOARD -->
+        <section id="dashboard-view" class="content-inner hidden">
+            <div class="page-header">
+                <div class="page-title">Dashboard</div>
+                <div class="page-subtitle" id="dash-greeting">Loading your overview...</div>
+            </div>
+
+            <div class="score-hero">
+                <div class="score-hero-left">
+                    <div class="score-label">Productivity Score</div>
+                    <div class="score-number" id="dash-productivity-score">--</div>
+                    <div class="score-sub">Based on tasks &amp; habit consistency</div>
+                </div>
+                <div class="score-ring">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="url(#scoreGrad)"
+                            stroke-width="8" stroke-linecap="round"
+                            stroke-dasharray="251.2" id="score-ring-fill"
+                            stroke-dashoffset="251.2"/>
+                        <defs>
+                            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#4f7cff"/>
+                                <stop offset="100%" stop-color="#7c5cfc"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value blue" id="dash-completed-tasks">--</div>
+                    <div class="stat-label">Tasks Done</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value muted" id="dash-pending-tasks">--</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value green" id="dash-logged-today">--</div>
+                    <div class="stat-label">Habits Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value orange" id="dash-total-habits">--</div>
+                    <div class="stat-label">Total Habits</div>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-title">Task Completion</div>
+                    <div class="chart-subtitle">Rate: <span class="accent-blue" id="dash-task-rate">--</span></div>
+                    <canvas id="task-chart" height="180"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Habit Consistency</div>
+                    <div class="chart-subtitle">This week: <span class="accent-indigo" id="dash-habit-rate">--</span></div>
+                    <canvas id="habit-chart" height="180"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Current Streaks</div>
+                <div class="streak-list" id="dash-streak-list"></div>
+            </div>
+            <!-- Weekly Report Card -->
+<div class="card" id="weekly-report-card" style="display:none">
+    <div class="card-title">📋 Weekly Report</div>
+    <div id="weekly-report-text"
+         style="white-space:pre-line;color:var(--text-secondary);font-size:13px;line-height:1.8">
+    </div>
+    <div style="margin-top:14px">
+        <button class="btn-secondary" style="font-size:12px;padding:7px 16px"
+            onclick="generateReportNow()">
+            Generate Report Now
+        </button>
+    </div>
+</div>
+        </section>
+
+        <!-- TASKS -->
+        <section id="tasks-view" class="content-inner hidden">
+            <div class="page-header">
+                <div class="page-title">Daily Tasks</div>
+                <div class="page-subtitle">Stay on top of what matters</div>
+            </div>
+            <div class="add-form">
+                <input type="text" id="new-task-title" class="add-input" placeholder="What needs to be done?" />
+                <select id="new-task-priority" class="add-input select-input">
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                </select>
+                <button class="btn-add" onclick="submitTask()">+ Add Task</button>
+            </div>
+            <div class="task-list" id="task-list"></div>
+        </section>
+
+        <!-- HABITS -->
+        <section id="habits-view" class="content-inner hidden">
+            <div class="page-header">
+                <div class="page-title">Habit Tracker</div>
+                <div class="page-subtitle">Build streaks, build yourself</div>
+            </div>
+            <div class="add-form">
+                <input type="text" id="new-habit-name" class="add-input" placeholder="E.g. Read 10 pages, Drink water..." />
+                <button class="btn-add btn-indigo" onclick="submitHabit()">+ Create Habit</button>
+            </div>
+            <div class="habit-grid" id="habit-list"></div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="profile-view" class="content-inner hidden">
+            <div class="page-header">
+                <div class="page-title">Profile &amp; Settings</div>
+                <div class="page-subtitle">Manage your account</div>
+            </div>
+
+            <div class="profile-section">
+                <div class="profile-section-title">Account Info</div>
+                <div class="card">
+                    <div class="profile-info-row">
+                        <div class="user-avatar lg" id="profile-avatar">?</div>
+                        <div>
+                            <div class="profile-name" id="profile-name">--</div>
+                            <div class="profile-email" id="profile-email">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="profile-section-title">Change Password</div>
+                <div class="card">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" id="current-password" class="form-input" placeholder="••••••••" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" id="new-password" class="form-input" placeholder="Minimum 8 characters" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" id="confirm-password" class="form-input" placeholder="Repeat new password" />
+                    </div>
+                    <div class="error-msg" id="pw-error"></div>
+                    <button class="btn-primary" onclick="changePassword()">Update Password</button>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="profile-section-title">Danger Zone</div>
+                <div class="card danger-card">
+                    <div class="danger-row">
+                        <div>
+                            <div class="danger-title">Log out of LifeOS</div>
+                            <div class="danger-sub">You will need to sign in again</div>
+                        </div>
+                        <button class="btn-danger" onclick="confirmLogout()">Log Out</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+        <div class="modal-title" id="edit-modal-title">Edit</div>
+        <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" id="edit-modal-input" class="form-input" />
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+            <button class="btn-primary modal-confirm" onclick="saveEdit()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="delete-modal">
+    <div class="modal">
+        <div class="modal-title">Are you sure?</div>
+        <div class="modal-body" id="delete-modal-text">This action cannot be undone.</div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal">
+        <div class="modal-title" id="confirm-modal-title">Confirm</div>
+        <div class="modal-body" id="confirm-modal-message">Are you sure?</div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+            <button id="confirm-modal-ok" class="btn-primary modal-confirm" onclick="executeConfirm()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

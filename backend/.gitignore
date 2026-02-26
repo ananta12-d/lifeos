@@ -1,0 +1,16 @@
+# Secrets — never commit these
+.env
+*.db
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Windows
+Thumbs.db
+desktop.ini
