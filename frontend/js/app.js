@@ -97,12 +97,16 @@ async function tryRefresh() {
 
 async function apiFetch(endpoint, options = {}, retry = true) {
     const { access } = getTokens();
+    // Add a timestamp to the URL to prevent mobile caching
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const url = `${API_URL}${endpoint}${separator}cb=${new Date().getTime()}`;
+
     const headers = {
         'Content-Type': 'application/json',
         ...(access && { 'Authorization': `Bearer ${access}` }),
         ...options.headers,
     };
-    const res = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+    const res = await fetch(url, { ...options, headers });
     if (res.status === 401 && retry) {
         const refreshed = await tryRefresh();
         if (refreshed) return apiFetch(endpoint, options, false);
