@@ -143,6 +143,8 @@ app.add_middleware(
         "http://localhost:5500",
         "http://127.0.0.1:5500",
         "null",
+        "https://lifeos-2-cob5djzec-ananta12-ds-projects.vercel.app",
+        "https://lifeos-ananta.vercel.app",  # add your clean domain here too
     ],
     allow_credentials=True,
     allow_methods=["*"],
