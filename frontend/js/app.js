@@ -2,7 +2,7 @@
 // LIFEOS — app.js
 // ════════════════════════════════════════
 
-const API_URL = 'http://127.0.0.1:8001/api/v1';
+const API_URL = 'https://lifeos-ananta.up.railway.app/api/v1';
 
 // ════════════════════════════════════════
 // TOAST SYSTEM
