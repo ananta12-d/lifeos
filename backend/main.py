@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -83,17 +83,26 @@ def get_db():
 # SECURITY  (password hashing + JWT)
 # ════════════════════════════════════════
 
-pwd_context   = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
 
 def hash_password(password: str) -> str:
-    # Bcrypt has a 72-byte limit. We truncate to ensure it never crashes.
-    # Most users won't hit 72, but password managers might.
-    return pwd_context.hash(password[:72])
+    # Bcrypt requires bytes. We also truncate to 72 bytes to prevent length errors.
+    pwd_bytes = password[:72].encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(pwd_bytes, salt)
+    return hashed_password.decode('utf-8') # Return as string for database storage
 
 
 def verify_password(plain: str, hashed: str) -> bool:
+    # Encode both strings to bytes for comparison
+    plain_bytes = plain[:72].encode('utf-8')
+    hashed_bytes = hashed.encode('utf-8')
+    try:
+        return bcrypt.checkpw(plain_bytes, hashed_bytes)
+    except ValueError:
+        # Triggers if the hashed string is invalid/corrupted
+        return Falseool:
     return pwd_context.verify(plain[:72], hashed)
 
 
